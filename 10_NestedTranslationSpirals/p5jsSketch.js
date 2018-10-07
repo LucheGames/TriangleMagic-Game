@@ -6,10 +6,13 @@ function setup() {
     randomHue = random (1, 360);
     maxTriangles = 100;
     minTriangles = 1;
+
+    triangleSize = 200;
+    triangleArray = [];
+
     angleMode(DEGREES);
     // rectMode(CENTER);
-    // isDragged = false;
-    triangleArray = [];
+    isDragged = false;
 
 }
 
@@ -17,59 +20,59 @@ function draw() {
     background(100);
     background(randomHue, 100, 100, 0.25); 
     randomHue = (randomHue + 0.5)% 360;
+    translate(windowWidth / 2 , windowHeight /2);
+    // translate (mouseX, mouseY);
 
     triangleArray.forEach(function(triangle, index, triangleArray) {        
         triangle.colourShift();
-        triangle.show(); 
+        triangle.show();
+        triangle.decreaseRotate(); 
+        // triangle.colourShift();
+        // triangle.dragRotate();
         // if (triangle.alpha <= 0.05) {
         //   triangleArray.splice(index, 1);
         // }
+        if (isDragged){
+          triangle.increaseRotate();
+      // triangle.colourShift();
+        }  
     });
 
-    // if (isDragged){
 
-      // }      
 
     ArrayClamp (triangleArray, maxTriangles);
 
 } // end of draw
 
-function mousePressed() {
-     // isDragged = true;
-
-
-    if (mouseIsPressed) {
-      if (mouseButton === LEFT) {
-       //  oldLineStartX = mouseX;
-       // oldLineStartY = mouseY; 
-      }
-      if (mouseButton === RIGHT) {
-        // lineStartX = mouseX;
-        // lineStartY = mouseY;
-      }
-    }
-}
+// function mousePressed() { 
+//    if (mouseIsPressed) {
+//       if (mouseButton === LEFT) {
+//       }
+//       if (mouseButton === RIGHT) {
+//       }
+//     }
+// }
 
 function mouseDragged () {
-    // isDragged = true;
-        triangleSpawn(triangleArray);
-        setTimeout(1000);                        
+    isDragged = true;
+    triangleSpawn(triangleArray);
+    setTimeout(10000);                        
 }
 
 function mouseReleased() {
-    // isDragged = false;
-
+    isDragged = false;
 }
 
 function triangleSpawn(arr)
 {    for (i = 0; i < minTriangles; i ++) {
-        // rando1 = randomGaussian(-300,300);
-        // rando2 = randomGaussian(-300,300);
-        rando1 = random(-300,300);
-        rando2 = random(-300,300);
-        var v0 = createVector (mouseX, mouseY);
+        rando0 = random(-triangleSize / 2,triangleSize / 2);
+        rando1 = random(-triangleSize,triangleSize);
+        rando2 = random(-triangleSize,triangleSize);
+        // var v0 = createVector (mouseX, mouseY);
+        var v0 = createVector (mouseX + rando0, mouseY - rando0);
         var v1 = createVector(mouseX + rando1, mouseY+ rando2);
-        var v2 = createVector(mouseX + rando2, mouseY+ rando1);
+        var v2 = createVector(mouseX - rando2, mouseY+ rando1);
+
         var hue = random (1, 360);
         var triangle = new DrawTriangle(v0, v1, v2, hue);
         setTimeout(1000); 
@@ -89,26 +92,43 @@ class DrawTriangle {
       this.randomSpin = random (0, 1);
       this.hue = hue;
       this.alpha = random(0.1, 0.9);
-      // this.lifeCount = 0;
     }
-    // dimMak(dimmer) {
-    //   this.alpha -= dimmer;
-    // }
+
     colourShift() {
       this.hue = (this.hue + random(0.1, 0.5)) % 360;
-    }  
+    }
+
+    increaseRotate() {
+      // this.midX
+      // this.midY
+      // this.endX
+      // this.endY
+      rotate(this.randomAngle / (mouseY / 30));
+    }
+
+    decreaseRotate() {
+      // this.midX
+      // this.midY
+      // this.endX
+      // this.endY
+      rotate(-this.randomAngle / (mouseX / 30));
+    }
+
     show() {
-      // strokeWeight(this.weight);
-      // stroke(this.hue, 100, 100, this.alpha);
       push();
-      translate(this.startX , this.startY);
+      // translate(windowWidth / 2 , windowHeight /2);
+      translate(this.startX / 2 , this.startY /2);
+
       fill(this.hue, 100, 100, this.alpha);
-      rotate(this.randomAngle);
+      // rotate(this.randomAngle);
       this.randomAngle += this.randomSpin;
-      triangle(this.startX, this.startY, this.midX, this.midY, this.endX, this.endY);
-      
+      triangle(0, 0, this.midX, this.midY, this.endX, this.endY);
+
+      // TEST circle to show origin
+      fill(100, 100, 100);
+      ellipse(0, 0, 40, 40);
+
       pop();
-      // this.lifeCount ++;
     }
 } // end DrawTriangle class
 

@@ -27,28 +27,20 @@ function draw() {
     });
 
     // if (isDragged){
-
       // }      
 
     ArrayClamp (triangleArray, maxTriangles);
 
 } // end of draw
 
-function mousePressed() {
-     // isDragged = true;
-
-
-    if (mouseIsPressed) {
-      if (mouseButton === LEFT) {
-       //  oldLineStartX = mouseX;
-       // oldLineStartY = mouseY; 
-      }
-      if (mouseButton === RIGHT) {
-        // lineStartX = mouseX;
-        // lineStartY = mouseY;
-      }
-    }
-}
+// function mousePressed() { 
+//    if (mouseIsPressed) {
+//       if (mouseButton === LEFT) {
+//       }
+//       if (mouseButton === RIGHT) {
+//       }
+//     }
+// }
 
 function mouseDragged () {
     // isDragged = true;
@@ -56,15 +48,12 @@ function mouseDragged () {
         setTimeout(1000);                        
 }
 
-function mouseReleased() {
-    // isDragged = false;
-
-}
+// function mouseReleased() {
+//     isDragged = false;
+// }
 
 function triangleSpawn(arr)
 {    for (i = 0; i < minTriangles; i ++) {
-        // rando1 = randomGaussian(-300,300);
-        // rando2 = randomGaussian(-300,300);
         rando1 = random(-300,300);
         rando2 = random(-300,300);
         var v0 = createVector (mouseX, mouseY);
@@ -89,26 +78,19 @@ class DrawTriangle {
       this.randomSpin = random (0, 1);
       this.hue = hue;
       this.alpha = random(0.1, 0.9);
-      // this.lifeCount = 0;
+
     }
-    // dimMak(dimmer) {
-    //   this.alpha -= dimmer;
-    // }
     colourShift() {
       this.hue = (this.hue + random(0.1, 0.5)) % 360;
     }  
     show() {
-      // strokeWeight(this.weight);
-      // stroke(this.hue, 100, 100, this.alpha);
       push();
       translate(this.startX , this.startY);
       fill(this.hue, 100, 100, this.alpha);
       rotate(this.randomAngle);
       this.randomAngle += this.randomSpin;
-      triangle(this.startX, this.startY, this.midX, this.midY, this.endX, this.endY);
-      
+      triangle(mouseX, mouseY, this.midX, this.midY, this.endX, this.endY);     
       pop();
-      // this.lifeCount ++;
     }
 } // end DrawTriangle class
 
