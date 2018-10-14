@@ -1,3 +1,6 @@
+// found solution to problem of getting class instance to refer to itself:
+// https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+
 function setup() {
     createCanvas (windowWidth, windowHeight);
     frameRate (30);
@@ -14,6 +17,7 @@ function setup() {
     // rectMode(CENTER);
     isDragged = false;
     spinToggle = 1;
+    deathDelay = 3000; //In miliseconds
 
 }
 
@@ -27,6 +31,7 @@ function draw() {
     triangleArray.forEach(function(triangle, index, triangleArray) {        
         // triangle.colourShift();
         triangle.show();
+        // triangle.rotateThis();
         // triangle.spinDirection = 1;
         // triangle.decreaseRotate(); 
         // triangle.colourShift();
@@ -34,12 +39,18 @@ function draw() {
         // if (triangle.alpha <= 0.05) {
         //   triangleArray.splice(index, 1);
         // }
-        if (isDragged){
-          // triangle.spinDirection = -1;
-        }  
+
+        // if (isDragged){
+        //   triangle.increaseRotate();
+        // }  else {
+        //   triangle.decreaseRotate();
+        // }
+
+        // DELETE AFTE X SECONDS
+        if(triangle.isDead) {
+          triangleArray.splice (index,1);
+        }
     });
-
-
 
     ArrayClamp (triangleArray, maxTriangles);
 
@@ -50,15 +61,16 @@ function mousePressed() {
       if (mouseButton === LEFT) {
       }
       if (mouseButton === RIGHT) {
+        ArrayClamp (triangleArray, 0);
       }
-      ArrayClamp (triangleArray, 0);
+      
     }
 }
 
 function mouseDragged () {
     isDragged = true;
     triangleSpawn(triangleArray);
-    setTimeout(10000);                        
+    // setTimeout(10000);                        
 }
 
 function mouseReleased() {
@@ -81,7 +93,6 @@ function triangleSpawn(arr) {
 
         // var hue = random (1, 360);
         var triangle = new DrawTriangle(origin, v0);
-        // setTimeout(1000000); 
         arr.push(triangle);
     }
 }
@@ -110,41 +121,40 @@ class DrawTriangle {
       this.hue = random (1, 360);
       this.alpha = random(0.1, 0.9);
       this.spinDirection = spinToggle;
+      this.isDead = false;
+      this.autoDeath = setTimeout(() => {this.dimMak()}, random(deathDelay / 2,deathDelay )); //see notes at top
+
     }
 
-    // colourShift() {
-    //   this.hue = (this.hue + random(0.1, 0.5)) % 360;
+    // increaseRotate(direction) {
+    //   rotate(this.randomAngle / (mouseY / 30 * this.spinDirection));
+    // }
+    // decreaseRotate() {
+    //   rotate(this.randomAngle / (mouseY / 30 * this.spinDirection));
+    // }
+    // rotateThis() {
+    //   rotate(this.randomAngle / (mouseY / 30 * this.spinDirection));
     // }
 
-    increaseRotate(direction) {
-      // push();
-      // translate(this.originX , this.originY);
-      rotate(this.randomAngle * this.spinDirection);
-      // pop();
-    }
-  
-
-    decreaseRotate() {
-      // push();
-      // translate(this.originX , this.originY);
-      rotate(-this.randomAngle);
-      // pop();
+    dimMak(){
+      this.isDead = true;
     }
 
     show() {
       push();
       // translate(windowWidth / 2 , windowHeight /2);
       translate(this.originX , this.originY);
-
+      // rotate(this.randomAngle / (mouseY / 30 * this.spinDirection));
+      rotate(this.randomAngle * this.spinDirection);
       fill(this.hue, 100, 100, this.alpha);
-      this.increaseRotate(this.spinDirection);
+      
       this.randomAngle += this.randomSpin;
       triangle(this.startX, this.startY, this.midX, this.midY, this.endX, this.endY);
       spinToggle = -spinToggle;
       
       // TEST circle to show origin
-      // fill(100, 100, 100);
-      // ellipse(0, 0, 40, 40);
+      fill(100, 100, 100);
+      ellipse(0, 0, 20, 20);
 
       pop();
     }
